@@ -85,7 +85,7 @@ export function Footer() {
   const glitchColors = isDark ? darkGlitchColors : lightGlitchColors;
 
   return (
-    <footer className="relative w-full">
+    <footer className="relative w-full px-3 sm:px-4">
       {/* Unified Section */}
       <section className="relative w-full h-[20vh] flex items-center justify-center overflow-hidden bg-background">
         {/* LetterGlitch Background */}
@@ -126,7 +126,7 @@ export function Footer() {
       {/* Divider line */}
       <div className="relative h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-12 sm:py-16">
+      <div className="max-w-4xl mx-auto py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* Column 1: Brand and Social */}
           <motion.div 

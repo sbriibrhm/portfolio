@@ -474,8 +474,8 @@ export default function Home() {
           </div>
 
           {/* Blog Posts Grid */}
-          <div className="relative z-10 w-full">
-            <div className="grid gap-8 sm:gap-12 md:grid-cols-2 lg:grid-cols-3 px-4 sm:px-8 md:px-12 lg:px-16">
+          <div className="relative z-10 w-full max-w-7xl mx-auto">
+            <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
               {latestBlog.map((post) => (
                 <Card key={post.slug} className="group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden">
                   {/* Thumbnail */}
