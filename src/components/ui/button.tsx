@@ -12,7 +12,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-lg transition-all active:scale-95",
-        gradient: "bg-gradient-to-r from-violet-600 to-blue-500 text-white transition-all shadow-[0_0_60px_rgba(124,58,237,0.2),0_0_120px_rgba(139,92,246,0.2),0_0_180px_rgba(109,40,217,0.2)] hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99]",
+        gradient: "bg-gradient-to-r from-primary via-primary/80 to-accent text-primary-foreground transition-all shadow-[0_0_60px_hsl(var(--primary)/0.2),0_0_120px_hsl(var(--primary)/0.15),0_0_180px_hsl(var(--primary)/0.1)] hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99]",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 hover:scale-105 hover:shadow-lg transition-all active:scale-95",
         outline:
@@ -80,7 +80,8 @@ function Button({
   if (asChild) {
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }), props.className)}
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
       >
         {props.children}
       </Comp>
@@ -100,7 +101,7 @@ function Button({
           <>
             {/* Shimmer sweep effect */}
             <span 
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 group-hover:translate-x-[200%] transition-all duration-700"
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-foreground/40 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 group-hover:translate-x-[200%] transition-all duration-700"
               style={{
                 transform: 'translateX(-200%)',
               }}
@@ -108,7 +109,7 @@ function Button({
             
             {/* Border dance effect */}
             <span 
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none opacity-0 group-hover:opacity-100"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-primary-foreground/20 to-transparent pointer-events-none opacity-0 group-hover:opacity-100"
               style={{
                 backgroundPosition: '200% center',
                 backgroundSize: '200% 100%',
@@ -122,7 +123,7 @@ function Button({
         {ripples.map((ripple) => (
           <span
             key={ripple.id}
-            className="absolute rounded-full bg-white/30 pointer-events-none"
+            className="absolute rounded-full bg-primary-foreground/30 pointer-events-none"
             style={{
               left: ripple.x,
               top: ripple.y,

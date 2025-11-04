@@ -1,271 +1,386 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { PageLayout } from "@/components/ui/page-layout";
+import { PageSection } from "@/components/ui/page-section";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Footer } from "@/components/footer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
+import { RainbowButton } from "@/components/ui/rainbow-button";
+import type { ExperienceItemType } from "@/components/work-experience";
+import { WorkExperience } from "@/components/work-experience";
+
+const WORK_EXPERIENCE: ExperienceItemType[] = [
+  {
+    id: "maagroup",
+    companyName: "HRD Corp Malaysia",
+    companyLogo: "/logos/hrdcorp-logo.png",
+    positions: [
+      {
+        id: "maagroup-1",
+        title: "Certified Trainer",
+        employmentPeriod: "Jun 2025 - Present",
+        employmentType: "Part-time",
+        icon: "education",
+        description: `- **Certified under Malaysia’s HRD Corp(Human Resource Development Corporation) TTT program**, delivering training in **AI, design thinking, and digital productivity**.
+- Develop and conduct **HRD-claimable courses** for vocational educators and professionals, focusing on **AI integration, automation, and creative workflows**.
+- Collaborate with institutions and corporate clients to **design outcome-based learning modules** that bridge technology and human capability.`,
+        skills: [
+          "Training",
+          "AI for Educators",
+          "Learning Design",
+          "Workforce Development",
+          "HRD Corp Certified",
+          "Education",
+          "AI & Automation",
+          "Upskilling",
+        ],
+        isExpanded: true,
+      }
+    ],
+    isCurrentEmployer: true,
+  },
+  {
+    id: "sabriibrahim",
+    companyName: "sabriibrahim.com",
+    companyLogo: "/avatar.jpg",
+    positions: [
+      {
+        id: "sabriibrahim-1",
+        title: "Product Designer",
+        employmentPeriod: "Jun 2025 - Present",
+        employmentType: "Part-time",
+        icon: "business",
+        description: `- Operate as a **multidisciplinary studio** focusing on **product design, AI workflow design, and creative experimentation**.
+- Design and engineer user interfaces and experiences.
+- Build and maintain sabriibrahim.com as a public portfolio and playground to explore **AI-assisted tools**, and **storytelling through design**.`,
+        skills: [
+          "Next.js",
+          "Vercel",
+          "Cursor",
+          "Claude Code",
+          "OpenAI Codex",
+          "Tailwind CSS",
+          "Shadcn/UI",
+          "Figma",
+          "React",
+          "TypeScript",
+          "Framer Motion",  
+          "Frontend Engineering",
+          "Design Systems",
+        ],
+        isExpanded: false,
+      },
+    ],
+    isCurrentEmployer: true,
+  },
+  {
+    id: "sabbatical",
+    companyName: "Independent",
+    positions: [
+      {
+        id: "sabbatical-1",
+        title: "Sabbatical",
+        employmentPeriod: "Feb 2024 - Jun 2025",
+        employmentType: "Time-off",
+        icon: "sabbatical",
+        description: `- Took a planned year-long break to **experiment with mini-retirement and personal rewirement,** focusing on reflection, creative renewal, and recalibrating long-term goals.
+- **Explored the F&B industry,** gaining hands-on experience in operations and learning practical business management to broaden entrepreneurial perspective.
+- Invested time in **creative hobbies** — from music production, building Gundam models and design tinkering to scooter customization — as a way to reconnect curiosity with craft.`,
+        skills: [],
+        isExpanded: false,
+      },
+    ],
+    isCurrentEmployer: false,
+  },
+  {
+    id: "delivery-hero",
+    companyName: "Delivery Hero",
+    companyLogo: "/logos/dh-small.png",
+    positions: [
+      {
+        id: "dh-1",
+        title: "Senior Product Designer — Adtech",
+        employmentPeriod: "Jun 2022 — Feb 2024",
+        employmentType: "Full-time",
+        icon: "design",
+        description: `- Led the design of **ad components on the consumer app**, improving discoverability and engagement across global food delivery brands.
+- Designed a centralized **AI-driven AdTech** platform empowering long-tail vendors to create, manage, and optimize campaigns with minimal effort.
+- Pioneered an **AI-powered marketing automation system** that optimized restaurant ad spend and delivered **€XXM in incremental annual non-commission revenue** through targeted deal personalization.`,
+        skills: [
+          "UI/UX Design",
+          "Prototyping",
+          "Product Strategy",
+          "User Flows",
+          "Figma",
+        ],
+        isExpanded: true,
+      },
+      {
+        id: "dh-2",
+        title: "Senior Product Designer — Vendor Growth",
+        employmentPeriod: "Sep 2019 — Jun 2022",
+        employmentType: "Full-time",
+        icon: "design",
+        description: `- Spearheaded the end-to-end design of a unified global menu management system serving over **500,000 restaurants**, enabling seamless migration of **Talabat, Hunger Station, and PedidosYa** into one centralized platform.
+- Partnered with product and engineering leads to drive a **40-point increase in vendor NPS**, improving communication flows, menu update experiences, and mobile usability across regions.
+- Defined and executed the **product design strategy** for menu self-service and quality initiatives — **tested and validated with Foodpanda** before scaling across Delivery Hero’s global markets.`,
+        skills: [
+          "Product Design",
+          "UX Strategy",
+          "Data Analysis",
+          "Cross-Platform Design",
+          "Prototyping",
+          "Figma",
+          "Self-Service Design",
+        ],
+        isExpanded: true,
+      }
+    ],
+    isCurrentEmployer: false,
+  },
+  {
+    id: "vara",
+    companyName: "Vara",
+    companyLogo: "/logos/vara-logo.jpeg",
+    positions: [
+      {
+        id: "vara-1",
+        title: "Lead Product Designer",
+        employmentPeriod: "Feb 2021 — Jun 2021",
+        employmentType: "Contract",
+        icon: "design",
+        description: `- Led the design vision for Vara’s mission to **make labor frictionless through modernizing human capital workflows.
+- Partnered with product and engineering teams to **streamline workforce management tools**, improving usability and adoption across enterprise clients.
+- Defined **design systems and interaction patterns** that supported rapid iteration and consistent experience across web and mobile platforms.
+- Collaborated directly with founders to **shape product strategy**, ensuring alignment between user needs, business goals, and technical feasibility.`,
+        skills: [
+          "UI/UX Design",
+          "Design Leadership",
+          "Team Management",
+          "Product Strategy",
+          "Figma",
+        ],
+        isExpanded: false,
+      },
+    ],
+    isCurrentEmployer: false,
+  },
+  {
+    id: "zinier",
+    companyName: "Zinier",
+    companyLogo: "/logos/zinier.jpeg",
+    positions: [
+      {
+        id: "zinier-1",
+        title: "Senior Product Designer",
+        employmentPeriod: "Aug 2020 — December 2020",
+        employmentType: "Full-time",
+        icon: "design",
+        description: `- **Migrated the design system from Sketch to Figma**, creating scalable and consistent components across mobile and web applications.
+- **Designed and launched a drag-and-drop workflow builder**, enabling non-developers to automate tasks and customize workflows directly within the platform.
+- **Led end-to-end design validation**, from early prototyping through final user testing, ensuring product quality, usability, and design consistency across teams.`,
+        skills: [
+          "Design Systems",
+          "Dashboard Design",
+          "Data Visualization",
+          "Figma",
+          "Sketch",
+          "UX Design",
+          "UI Design",
+          "Enterprise SaaS",
+          "Workflow Automation",
+        ],
+        isExpanded: false,
+      },
+    ],
+    isCurrentEmployer: false,
+  },
+  {
+    id: "grab",
+    companyName: "Grab",
+    companyLogo: "/logos/grab.svg",
+    positions: [
+      {
+        id: "grab-1",
+        title: "Lead Product Designer — Marketplace",
+        employmentPeriod: "Jan 2019 — July 2020",
+        employmentType: "Full-time",
+        icon: "design",
+        description: `- **Led design for driver marketplace experiences**, improving acceptance and reducing cancellations through **Gems** and **Team Missions**.
+- Launched **Grab Challenges** across all markets, driving sustained engagement and retention among driver-partners.
+- **Increased ads-driven EBITDA** by empowering long-tail merchants to advertise on the Grab platform via self-serve tools.`,
+        skills: [
+          "Product Design",
+          "UX Strategy",
+          "Incentive Systems",
+          "AdTech",
+          "Experimentation",
+          "Cross-Market Collaboration",
+          "Sketch",
+          "Framer"
+        ],
+        isExpanded: true,
+      },
+      {
+        id: "grab-2",
+        title: "Senior Product Designer — Economics",
+        employmentPeriod: "Jan 2017 – Jan 2019",
+        employmentType: "Full-time",
+        icon: "design",
+        description: `- Designed and launched the **Unified Incentives Platform**, optimizing supply utilization and earnings transparency for millions of drivers.
+- Created **Driver Heatmaps and Location Insights**, enabling smarter decisions and better alignment of supply and demand.
+- Served as a core contributor to **Grab Design System (GDS)**, maintaining consistency and scalability across platforms.`,
+        skills: [
+          "Design Systems",
+          "UX Strategy",
+          "UX Research",
+          "Interaction Design",
+          "Product Analytics",
+          "Sketch",
+          "Framer"
+        ],
+        isExpanded: true,
+      },
+      {
+        id: "grab-3",
+        title: "Product Designer — Driver Experience",
+        employmentPeriod: "Oct 2015 – Jan 2017",
+        employmentType: "Full-time",
+        icon: "code",
+        description: `- Improved **passenger match rate by 18%** and **reduced driver cancellations by 34%** through a redesigned booking experience.
+- **Scaled onboarding 5x** via a new online driver-onboarding platform adopted region-wide.
+- Created and launched **GrabChat**, reducing cancellations and strengthening driver–passenger communication.`,
+        skills: [
+          "Mobile UX",
+          "Onboarding Experience",
+          "Interaction Design",
+          "Conversion Optimization",
+        ],
+        isExpanded: true,
+      },
+      {
+        id: "grab-4",
+        title: "Front-End Developer — Product (MyTeksi)",
+        employmentPeriod: "Feb 2014 – Oct 2015",
+        employmentType: "Full-time",
+        icon: "code",
+        description: `- Built and maintained **regional MyTeksi websites** across six countries in Southeast Asia.
+- Developed **Share My Ride**, a passenger safety feature enhancing trust and transparency.
+- Created **internal booking tools** that improved operational efficiency for support teams.`,
+        skills: [
+          "Front-End Development",
+          "JavaScript",
+          "PHP",
+          "HTML/CSS",
+          "UI Implementation",
+          "Responsive Design",
+          "Ruby on Rails",
+        ],
+        isExpanded: true,
+      },
+    ],
+    isCurrentEmployer: false,
+  },
+  {
+    id: "wool-candy",
+    companyName: "Wool & Candy",
+    companyLogo: "/logos/wnc-logo.png",
+    positions: [
+      {
+        id: "wool-candy-1",
+        title: "Co-founder / Front End Developer",
+        employmentPeriod: "Sept 2013 — Sept 2017",
+        employmentType: "Full-time",
+        icon: "business",
+        description: `- Founded a small creative agency delivering digital products and brand experiences; led product development and front-end design for client projects.`,
+        skills: [
+          "Entrepreneurship",
+          "Frontend Development",
+          "Co-founder",
+          "JavaScript",
+          "CSS",
+          "HTML",
+        ],
+        isExpanded: false,
+      },
+    ],
+    isCurrentEmployer: false,
+  },
+  {
+    id: "smobble",
+    companyName: "Smobble",
+    companyLogo: "/logos/smobble-logo.svg",
+    positions: [
+      {
+        id: "smobble-1",
+        title: "UI and Web Designer",
+        employmentPeriod: "Nov 2012 — Feb 2014",
+        employmentType: "Full-time",
+        icon: "design",
+        description: `- Designed and developed marketing websites across gaming, self-development, and evergreen niches. 
+- Created branding and visual concepts for high-converting sales pages, while contributing to strategic decisions and client solutions to improve campaign performance.`,
+        skills: [],
+        isExpanded: false,
+      },
+    ],
+    isCurrentEmployer: false,
+  },
+  {
+    id: "education",
+    companyName: "Education",
+    positions: [
+      {
+        id: "uitm-shah-alam",
+        title: "UiTM - Universiti Teknologi MARA, Shah Alam (BA Hons, Graphic Design, Digital Media)",
+        employmentPeriod: "2010 - 2012",
+        employmentType: undefined,
+        icon: "education",
+        description: undefined,
+        skills: [],
+        isExpanded: false,
+      },
+      {
+        id: "uitm-kota-samarahan",
+        title: "UiTM - Universiti Teknologi MARA, Kota Samarahan (Diploma, Graphic Design and Digital Media)",
+        employmentPeriod: "2007 - 2010",
+        employmentType: undefined,
+        icon: "education",
+        description: undefined,
+        skills: [],
+        isExpanded: false,
+      },
+    ],
+    isCurrentEmployer: false,
+  },
+];
 
 export default function Experience() {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Smooth scroll handler
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const anchor = target.closest('a[href^="#"]') as HTMLAnchorElement;
-      
-      if (anchor) {
-        const href = anchor.getAttribute('href');
-        if (href && href !== '#') {
-          e.preventDefault();
-          const targetId = href.substring(1);
-          const targetElement = document.getElementById(targetId);
-          
-          if (targetElement) {
-            const navBarHeight = isScrolled ? 60 : 80;
-            const targetPosition = targetElement.offsetTop - navBarHeight;
-            
-            window.scrollTo({
-              top: targetPosition,
-              behavior: 'smooth'
-            });
-          }
-        }
-      }
-    };
-
-    document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
-  }, [isScrolled]);
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      {/* Floating Navigation Bar */}
-      <motion.nav
-        initial={false}
-        animate={{
-          scale: isScrolled ? 1 : 0.95,
-        }}
-        transition={{
-          duration: 0.3,
-          ease: "easeOut",
-        }}
-        className={`fixed z-50 ${!isScrolled ? 'top-4 right-4 md:left-1/2 md:-translate-x-1/2 md:right-auto' : 'top-0 left-0 right-0'} w-auto ${isScrolled ? '!top-0 !left-0 !right-0 !-translate-x-0 rounded-none border-x-0 border-t-0' : 'rounded-full'} ${isScrolled ? 'max-w-full' : 'max-w-[calc(100%-2rem)] md:max-w-2xl lg:max-w-3xl xl:max-w-4xl'} px-3 sm:px-6 border border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/40 shadow-lg transition-all duration-300`}
-      >
-        <div className={`mx-auto py-3 sm:py-3.5 flex items-center ${isScrolled ? 'max-w-6xl px-3 sm:px-6' : 'w-full px-3 sm:px-8'}`}>
-          <div className="flex items-center justify-between w-full">
-            {/* Left: Avatar + Name (shown when scrolled) */}
-            <motion.div 
-              initial={false}
-              animate={{
-                opacity: isScrolled ? 1 : 0,
-                width: isScrolled ? 'auto' : 0,
-              }}
-              transition={{
-                duration: 0.3,
-                ease: "easeOut",
-              }}
-              className={`overflow-hidden ${isScrolled ? 'flex' : 'hidden'} items-center gap-3 mr-4`}
-            >
-              <Link 
-                href="/" 
-                className="flex items-center gap-3 group cursor-pointer"
-              >
-                <Avatar className="size-8">
-                  <AvatarImage src="/avatar.jpg" alt="Sabri Ibrahim" />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
-                    SI
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-base font-semibold text-foreground group-hover:text-primary transition-colors duration-200 whitespace-nowrap">
-                  Sabri Ibrahim
-                </span>
-              </Link>
-            </motion.div>
-            
-            {/* Center: Desktop Menu */}
-            <div className="flex-1 items-center justify-center hidden md:flex">
-              <div className="flex items-center gap-6">
-                <Link 
-                  href="/" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full hover:bg-accent/50"
-                >
-                  Home
-                </Link>
-                <Link 
-                  href="/#about" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full hover:bg-accent/50"
-                >
-                  About
-                </Link>
-                <Link 
-                  href="/#work" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full hover:bg-accent/50"
-                >
-                  Projects
-                </Link>
-                <Link 
-                  href="/experience" 
-                  className="text-sm font-medium text-primary hover:text-primary transition-colors px-3 py-2 rounded-full hover:bg-accent/50"
-                >
-                  Experience
-                </Link>
-                <Link 
-                  href="/recommendations" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full hover:bg-accent/50"
-                >
-                  Recommendations
-                </Link>
-                <Link 
-                  href="/#contact" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full hover:bg-accent/50"
-                >
-                  Contact
-                </Link>
-              </div>
-            </div>
+    <PageLayout showHeroCard={false}>
+      {/* Experience Section */}
+      <PageSection>
+        <PageHeader 
+          badge="Experience & Education"
+          headline="Work Experience"
+          subheadline="10+ years of building products end-to-end, crafting UX and prompts that drive growth."
+        />
 
-            {/* Right: Theme Toggle */}
-            <div className="hidden md:flex items-center gap-4">
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Avatar + Name Section - Floating on the left when not scrolled */}
-      {!isScrolled && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ 
-            opacity: 1, 
-            y: 0,
-          }}
-          transition={{
-            duration: 0.5,
-            ease: "easeOut",
-          }}
-          className="fixed z-[60] top-4 left-4 w-auto px-3 sm:px-6 flex items-center h-[60px]"
-        >
-          <Link 
-            href="/" 
-            className="flex items-center gap-3 group cursor-pointer w-fit"
-          >
-            <Avatar className="size-8 sm:size-10">
-              <AvatarImage src="/avatar.jpg" alt="Sabri Ibrahim" />
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm sm:text-lg">
-                SI
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-sm sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors duration-200">
-              Sabri Ibrahim
-            </span>
-          </Link>
-        </motion.div>
-      )}
-
-      <main className="w-full">
-        {/* Experience Section */}
-        <section className="min-h-screen px-3 sm:px-4 py-16 sm:py-20 bg-background pt-32 sm:pt-40">
-          <div className="max-w-4xl mx-auto">
-            {/* Badge */}
-            <div className="group relative inline-flex items-center px-4 py-2 rounded-full border border-border/50 bg-background/10 backdrop-blur-sm text-sm font-medium cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 hover:border-border hover:bg-background/20 hover:shadow-[0_0_60px_rgba(124,58,237,0.2),0_0_120px_rgba(139,92,246,0.2)] active:scale-[0.98] mb-8 sm:mb-12">
-              {/* Shimmer effect on hover */}
-              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700 pointer-events-none opacity-0 group-hover:opacity-100" />
-              
-              <span className="relative z-10">
-                Experience & Education
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-[0.8] sm:leading-tight mb-4 sm:mb-6">Work Experience</h1>
-
-            {/* Subheadline */}
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 sm:mb-12 leading-tight">
-              10+ years of building products end-to-end, crafting UX and prompts that drive growth.
-            </p>
-
-            <div className="space-y-6 sm:space-y-8">
-              {/* Experience 1 */}
-              <div className="border-l-2 border-primary pl-4 sm:pl-6">
-                <div className="flex flex-col sm:flex-row sm:justify-between mb-2">
-                  <h3 className="text-lg sm:text-xl font-semibold">Senior Frontend Developer</h3>
-                  <span className="text-sm sm:text-base text-muted-foreground">2021 - Present</span>
-                </div>
-                <p className="text-primary font-medium mb-2 text-sm sm:text-base">Tech Solutions Inc.</p>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Led a team of 5 developers to build and maintain large-scale React applications. 
-                  Implemented CI/CD pipelines, improved performance by 40%, and mentored junior developers.
-                </p>
-              </div>
-
-              {/* Experience 2 */}
-              <div className="border-l-2 border-primary pl-4 sm:pl-6">
-                <div className="flex flex-col sm:flex-row sm:justify-between mb-2">
-                  <h3 className="text-lg sm:text-xl font-semibold">Full-Stack Developer</h3>
-                  <span className="text-sm sm:text-base text-muted-foreground">2019 - 2021</span>
-                </div>
-                <p className="text-primary font-medium mb-2 text-sm sm:text-base">Digital Agency</p>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Developed custom web applications using React, Node.js, and MongoDB. 
-                  Worked closely with design teams to create pixel-perfect, responsive interfaces.
-                </p>
-              </div>
-
-              {/* Experience 3 */}
-              <div className="border-l-2 border-primary pl-4 sm:pl-6">
-                <div className="flex flex-col sm:flex-row sm:justify-between mb-2">
-                  <h3 className="text-lg sm:text-xl font-semibold">Junior Web Developer</h3>
-                  <span className="text-sm sm:text-base text-muted-foreground">2018 - 2019</span>
-                </div>
-                <p className="text-primary font-medium mb-2 text-sm sm:text-base">Startup Co.</p>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Built responsive web pages and maintained existing WordPress sites. 
-                  Learned modern JavaScript frameworks and contributed to team projects.
-                </p>
-              </div>
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-semibold mt-8 sm:mt-12 mb-6 sm:mb-8">Education</h3>
-            <div className="border-l-2 border-primary pl-4 sm:pl-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between mb-2">
-                <h3 className="text-lg sm:text-xl font-semibold">Bachelor of Computer Science</h3>
-                <span className="text-sm sm:text-base text-muted-foreground">2014 - 2018</span>
-              </div>
-              <p className="text-primary font-medium text-sm sm:text-base">University Name</p>
-            </div>
+            <WorkExperience
+              className="w-full rounded-lg border"
+              experiences={WORK_EXPERIENCE}
+            />
 
             {/* CTA */}
             <div className="flex justify-start mt-8 sm:mt-12">
-              <Button
+              <RainbowButton
                 size="lg"
-                variant="gradient"
                 className="px-8 sm:px-12 py-3 sm:py-4 text-sm sm:text-base font-medium h-auto"
                 onClick={() => window.open('/resume.pdf', '_blank')}
               >
                 Download Resume (PDF)
-              </Button>
+              </RainbowButton>
             </div>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <Footer />
-      </main>
-    </div>
+      </PageSection>
+    </PageLayout>
   );
 }
 

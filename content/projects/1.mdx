@@ -1,0 +1,49 @@
+---
+title: "Reducing Grab Ride Cancellations through Predictive UX Design"
+description: "How Grab used predictive design and transparent ETA communication to reduce passenger cancellations by 27%."
+date: "2023-06-10"
+tags: ["ux-design", "e-commerce", "user-research", "figma", "react", "case-study"]
+cover: 
+---
+
+# Reducing Grab Ride Cancellations through Predictive UX Design
+
+## Context
+
+Grab faced a recurring problem: riders were canceling trips within the first few minutes after booking.  
+Drivers were frustrated by long pickups, and passengers didn't trust the ETA shown on screen.
+
+**Goal:** Improve reliability and reduce cancellations without adding more friction to the booking flow.
+
+## Insights from Research
+
+We discovered that:
+- 45% of cancellations occurred within 3 minutes.
+- Drivers were 2× more likely to cancel if pickup > 3km.
+- Passengers often rebooked immediately after canceling — showing *frustration, not churn*.
+
+## Design Intervention
+
+We built a **predictive pairing algorithm** and added **ETA confidence messaging** to help users feel more in control.
+
+```tsx
+const isReliableMatch = (driver, distance) => {
+  return driver.acceptanceRate > 0.8 && distance < 3;
+};
+```
+
+## Measured Impact
+
+| Metric | Before | After | Change |
+|---------|---------|-------|--------|
+| Cancellation Rate | 19.2% | **14.0%** | ↓ 27% |
+| Trip Completion | 82% | **89%** | +7% |
+| Driver Satisfaction | 4.1 | **4.5** | +0.4 |
+
+## Reflection
+
+> Predictive design only works when people can see why it's confident.  
+> Transparency creates reliability — automation alone doesn't.
+
+### Tools Used
+Figma · React Native · Mixpanel · Dovetail

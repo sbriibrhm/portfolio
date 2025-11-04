@@ -64,6 +64,7 @@ type DivGridProps = {
 type CellStyle = React.CSSProperties & {
   ["--delay"]?: string;
   ["--duration"]?: string;
+  ["--cell-rainbow-color"]?: string;
 };
 
 const DivGrid = ({
@@ -81,6 +82,15 @@ const DivGrid = ({
     () => Array.from({ length: rows * cols }, (_, idx) => idx),
     [rows, cols],
   );
+
+  // Rainbow colors array matching the rainbow button
+  const rainbowColors = [
+    "var(--color-1)", // Orange
+    "var(--color-2)", // Purple
+    "var(--color-3)", // Blue
+    "var(--color-4)", // Light Blue
+    "var(--color-5)", // Green
+  ];
 
   const gridStyle: React.CSSProperties = {
     display: "grid",
@@ -102,19 +112,28 @@ const DivGrid = ({
         const delay = clickedCell ? Math.max(0, distance * 55) : 0; // ms
         const duration = 200 + distance * 80; // ms
 
-        const style: CellStyle = clickedCell
-          ? {
-              "--delay": `${delay}ms`,
-              "--duration": `${duration}ms`,
-            }
-          : {};
+        // Assign a deterministic rainbow color to each cell based on its index
+        const colorIndex = (rowIdx * 3 + colIdx * 2) % rainbowColors.length;
+        const cellColor = rainbowColors[colorIndex];
+
+        const style: CellStyle = {
+          "--cell-rainbow-color": cellColor,
+          ...(clickedCell
+            ? {
+                "--delay": `${delay}ms`,
+                "--duration": `${duration}ms`,
+              }
+            : {}),
+        };
 
         return (
           <div
             key={idx}
             className={cn(
-              "cell relative border-[0.5px] opacity-40 transition-opacity duration-150 will-change-transform hover:opacity-80 dark:shadow-[0px_0px_40px_1px_var(--cell-shadow-color)_inset]",
-              clickedCell && "animate-cell-ripple [animation-fill-mode:none]",
+              "cell relative border-[0.5px] opacity-40 transition-all duration-150 will-change-transform",
+              "hover:opacity-100 hover:!bg-[var(--cell-rainbow-color)]",
+              "dark:shadow-[0px_0px_40px_1px_var(--cell-shadow-color)_inset]",
+              clickedCell && "animate-cell-ripple-rainbow [animation-fill-mode:none]",
               !interactive && "pointer-events-none",
             )}
             style={{

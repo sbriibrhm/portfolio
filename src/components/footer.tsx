@@ -1,7 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import LetterGlitch from "./LetterGlitch";
+import { Button } from "@/components/ui/button";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -18,7 +22,7 @@ export function Footer() {
     },
     {
       name: "Twitter",
-      url: "https://twitter.com",
+      url: "https://twitter.com/sabriibrahm",
       icon: (
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
@@ -36,7 +40,7 @@ export function Footer() {
     },
     {
       name: "Email",
-      url: "mailto:hello@sabri.dev",
+      url: "mailto:sbriibrahm@gmail.com",
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -46,16 +50,81 @@ export function Footer() {
   ];
 
   const quickLinks = [
-    { name: "About", href: "#about" },
-    { name: "Projects", href: "#work" },
-    { name: "Work", href: "#resume" },
-    { name: "Contact", href: "#contact" },
+    { name: "About", href: "/about" },
+    { name: "Experience", href: "/experience" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "mailto:sbriibrhm@gmail.com" },
   ];
 
+  // Theme-aware glitch colors for unified section
+  const lightGlitchColors = ['#2b4539', '#61dca3', '#61b3dc', '#a855f7', '#ec4899'];
+  const darkGlitchColors = ['#61dca3', '#9247e5', '#ec4899', '#3b82f6', '#f59e0b'];
+  
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Check initial theme
+    const checkTheme = () => {
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      setIsDark(isDarkMode);
+    };
+
+    // Check on mount
+    checkTheme();
+
+    // Watch for theme changes
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const glitchColors = isDark ? darkGlitchColors : lightGlitchColors;
+
   return (
-    <footer className="relative w-full mt-20">
+    <footer className="relative w-full">
+      {/* Unified Section */}
+      <section className="relative w-full h-[20vh] flex items-center justify-center overflow-hidden bg-background">
+        {/* LetterGlitch Background */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-background/70 dark:bg-background/85 backdrop-blur-sm" />
+          <LetterGlitch
+            glitchColors={glitchColors}
+            glitchSpeed={50}
+            centerVignette={false}
+            outerVignette={false}
+            smooth={true}
+            backgroundColor="transparent"
+            className="w-full h-full opacity-40 dark:opacity-50"
+          />
+        </div>
+
+        {/* Content Overlay */}
+        <div className="relative z-10 w-full h-full flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="flex items-center justify-center"
+          >
+            {/* CTAs */}
+            <Link href="mailto:sbriibrhm@gmail.com">
+              <InteractiveHoverButton
+                className="px-8 sm:px-12 py-3 sm:py-4 text-sm sm:text-base font-medium h-auto"
+              >
+                Contact Me
+              </InteractiveHoverButton>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Divider line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="relative h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       
       <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
@@ -70,7 +139,7 @@ export function Footer() {
             <div className="space-y-3">
               <h3 className="text-lg sm:text-xl font-semibold text-foreground">Sabri Ibrahim</h3>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Product designer who codes. Case studies, process, and AI training—research to production with clear metrics.
+              Designer, coder, AI enthusiast, and full-time Curiosity Engine. I’m turning code, culture, and perhaps one too many open tabs into products with real impact. Remote-friendly and always open to a chat about AI tools, the next sneaker drop, or discussing a new freelance project.
               </p>
             </div>
             <div className="pt-2">
@@ -82,14 +151,14 @@ export function Footer() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group p-2 sm:p-3 rounded-xl border border-border/40 bg-background/60 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 relative overflow-hidden"
+                    className="group p-2 sm:p-3 rounded-xl border border-border/40 bg-background/60 backdrop-blur-sm text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 relative overflow-hidden"
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     aria-label={social.name}
                   >
                     {/* Shimmer effect on hover */}
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700 pointer-events-none" />
-                    <span className="relative z-10">{social.icon}</span>
+                    <span className="relative z-10 text-accent-foreground group-hover:text-primary transition-colors duration-200">{social.icon}</span>
                   </motion.a>
                 ))}
               </div>
@@ -112,16 +181,19 @@ export function Footer() {
                   href={link.href}
                   className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-200 hover:translate-x-1 transform inline-block w-fit group"
                   onClick={(e) => {
-                    e.preventDefault();
-                    const targetId = link.href.substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                      const navBarHeight = 60;
-                      const targetPosition = targetElement.offsetTop - navBarHeight;
-                      window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                      });
+                    // Only handle smooth scroll for anchor links
+                    if (link.href.startsWith('#') || link.href.includes('#')) {
+                      e.preventDefault();
+                      const targetId = link.href.includes('#') ? link.href.split('#')[1] : link.href.substring(1);
+                      const targetElement = document.getElementById(targetId);
+                      if (targetElement) {
+                        const navBarHeight = 60;
+                        const targetPosition = targetElement.offsetTop - navBarHeight;
+                        window.scrollTo({
+                          top: targetPosition,
+                          behavior: 'smooth'
+                        });
+                      }
                     }
                   }}
                 >
@@ -140,17 +212,21 @@ export function Footer() {
             className="space-y-4"
           >
             <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3">Currently Playing</h3>
-            <div className="rounded-xl overflow-hidden">
+            <div className="rounded-xl overflow-hidden bg-[#1DB954]/5 border border-border/40">
               <iframe
-                data-testid="embed-iframe"
-                style={{ borderRadius: "12px" }}
+                title="Spotify Playlist - Currently Playing"
                 src="https://open.spotify.com/embed/playlist/7HugrsYF4sgmpVsu3sTcHp?utm_source=generator&theme=0"
                 width="100%"
-                height="120"
+                height="152"
                 frameBorder="0"
+                allowFullScreen
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
-                className="border-0 rounded-xl"
+                className="border-0 w-full"
+                style={{ 
+                  borderRadius: "12px",
+                  minHeight: "152px"
+                }}
               />
             </div>
           </motion.div>

@@ -1,0 +1,260 @@
+---
+title: "How I Built My Portfolio: A Designer's Journey into Next.js 16"
+description: "From MDX content management to custom animations—discovering the decisions, challenges, and solutions behind building a modern portfolio as a designer learning to code."
+date: "July 27, 2025"
+author: "Sabri"
+tags: ["nextjs", "mdx", "portfolio", "react", "typescript", "design"]
+cover: "/images/footnote-4.webp"
+draft: false
+---
+
+After 10+ years building products as a product designer, I finally decided to build my own portfolio from scratch, again!. 
+
+Not just design it—actually code it. This is the story of how I learned Next.js 16, wrestled with MDX, and discovered that sometimes the best way to learn is to ship something real.
+
+## Why Build Instead of Use a Template?
+
+Let me be honest: I could have used a template. There are amazing portfolio templates out there.
+
+But here's the thing—as a designer who's spent years collaborating with engineers, 
+
+I wanted to understand what I was asking for. To speak the language. To know what's easy, what's hard, and what's actually impossible.
+
+> **The Real Reason**: I wanted to build something that felt genuinely mine. Every interaction, every animation, every detail crafted exactly how I envisioned it—not constrained by template limitations.
+
+This portfolio became my learning project. My playground. My "what if I tried this?" space.
+
+## The Tech Stack Decision
+
+I started with what I knew: 
+
+- **Next.js** because everyone talks about it.
+- **TypeScript** because I wanted type safety (and fewer bugs).
+- **MDX** because I write a lot and wanted content management that felt natural.
+
+### Why Next.js 16?
+
+Next.js 16 was a natural choice. The React Server Components, improved MDX support, and built-in optimizations made it feel like the right tool for the job. Plus, I'm a sucker for good defaults—Next.js handles routing, image optimization, and static generation out of the box.
+
+```tsx
+// This is basically magic—Next.js handles all the routing
+export async function generateStaticParams() {
+  return getAllContent("blog").map((p) => ({ slug: p.slug }));
+}
+```
+
+### Why MDX?
+
+As a designer, I think in components. MDX lets me write Markdown (which I love) but drop in React components whenever I need something custom. It's the perfect balance between simplicity and power.
+
+```mdx
+---
+title: "My Post"
+date: "2025-01-27"
+---
+
+# Hello World
+
+This is regular Markdown, but I can also use components:
+
+<Callout type="info">
+  This is a custom component!
+</Callout>
+```
+
+## The Architecture: Simple, But Intentional
+
+I kept the structure simple. File-based content management means I can write a new blog post by creating a file. No CMS, no database, no complexity I don't need.
+
+```
+portfolio/
+├── content/
+│   ├── blog/          # Just .mdx files
+│   └── projects/      # More .mdx files
+├── src/
+│   ├── app/           # Next.js pages
+│   ├── components/    # Reusable components
+│   └── lib/           # Utilities (content parsing, etc.)
+```
+
+The content parsing is straightforward—read files, extract frontmatter, calculate reading time. It works, and I understand every line.
+
+```tsx
+function parseFile(filepath: string): ContentItem {
+  const source = fs.readFileSync(filepath, "utf8");
+  const { data, content } = matter(source);
+  const stats = readingTime(content);
+  const slug = path.basename(filepath).replace(/\.mdx?$/, "");
+
+  return {
+    slug,
+    title: data.title || slug,
+    description: data.description || "",
+    date: data.date || "",
+    readingTime: stats.text,
+    filepath,
+  };
+}
+```
+
+## The Hard Parts (And How I Solved Them)
+
+### 1. Custom MDX Components
+
+I wanted my blog posts to feel rich—not just text, but interactive elements. Code blocks with syntax highlighting, callouts, quotes, timelines. The challenge? Making them work seamlessly with MDX.
+
+**Solution**: I mapped all HTML elements to custom React components. This way, every `<pre>` becomes a syntax-highlighted code block, every `<blockquote>` becomes a styled quote component.
+
+```tsx
+const components = {
+  pre: ({ children, ...props }: any) => {
+    const codeProps = children?.props || {};
+    const { className, children: codeChildren } = codeProps;
+    const language = className?.replace(/language-/, "") || "javascript";
+    
+    return (
+      <CodeBlock language={language} showLineNumbers={true}>
+        {codeChildren}
+      </CodeBlock>
+    );
+  },
+  blockquote: ({ children, ...props }: any) => {
+    // Smart quote parsing—extracts author if formatted as "Text - Author"
+    const text = extractText(children).trim();
+    const authorMatch = text.match(/^(.+?)\s*-\s*(.+)$/);
+    
+    if (authorMatch) {
+      const [, quoteText, author] = authorMatch;
+      return <Quote text={quoteText} author={author} />;
+    }
+    
+    return <blockquote>{children}</blockquote>;
+  },
+  // ... more component mappings
+};
+```
+
+### 2. Table of Contents Generation
+
+I wanted a dynamic table of contents that updates as you scroll. Turns out, this requires parsing headings, tracking scroll position, and managing state—all things I learned as I went.
+
+**Solution**: I used `rehype-slug` to automatically add IDs to headings, then built a client component that:
+- Scans the DOM for headings
+- Creates a nested list structure
+- Highlights the current section as you scroll
+
+```tsx
+useEffect(() => {
+  const headings = document.querySelectorAll('h2, h3, h4');
+  const toc = Array.from(headings).map((heading) => ({
+    id: heading.id,
+    text: heading.textContent || '',
+    level: parseInt(heading.tagName[1]),
+  }));
+  setTableOfContents(toc);
+}, []);
+```
+
+### 3. Command Palette (Cmd+K)
+
+I'm obsessed with keyboard shortcuts. Raycast, Spotlight, VSCode's command palette—if it has Cmd+K, I'll use it. So of course I needed one for my portfolio.
+
+**Solution**: Used `cmdk` (Command Menu) component with custom actions for navigation, theme switching, and content search. It's the little things that make a site feel polished.
+
+```tsx
+React.useEffect(() => {
+  const down = (e: KeyboardEvent) => {
+    if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      setOpen((open) => !open);
+    }
+  };
+  document.addEventListener("keydown", down);
+  return () => document.removeEventListener("keydown", down);
+}, []);
+```
+
+### 4. Dark Mode That Actually Works
+
+Dark mode is tricky. You need to respect system preferences, persist user choice, and avoid flash of wrong theme. `next-themes` handles most of this, but I still spent time making sure transitions felt smooth.
+
+**Key Insight**: Always set `suppressHydrationWarning` on the `<html>` tag when using theme providers. This prevents hydration mismatches between with client-side theme detection.
+
+## The Design Decisions
+
+### Typography
+
+I went with a system font stack (`font-sans`) for performance, but styled it with Tailwind's typography plugin for readable prose. Sometimes the best design decision is the practical one.
+
+### Animations
+
+Framer Motion made animations approachable. The typewriter effect on the homepage? That was me experimenting. The hover effects on footnotes? Also experimentation. I wanted interactions that felt thoughtful, not excessive.
+
+```tsx
+const words = [
+  { text: "Product Designer" },
+  { text: "UX Engineer" },
+  { text: "Creative Technologist" },
+  { text: "Educator" },
+];
+
+<TypewriterEffectSmooth words={words} />
+```
+
+### Color System
+
+I kept colors semantic (`foreground`, `muted-foreground`, `primary`) so switching themes is just changing CSS variables. Design systems 101, but applied to my own work.
+
+## What I Learned
+
+1. **React Server Components are powerful** — I render MDX on the server, which means faster initial loads and better SEO.  
+2. **TypeScript catches mistakes early** — As someone learning, types were my safety net. They caught errors before runtime.
+3. **MDX is the perfect middle ground** — More flexible than static Markdown, simpler than a full CMS.
+4. **Performance matters** — Static generation means every page loads instantly. No waiting for API calls.
+5. **Shipping beats perfect** — I could optimize forever, but at some point you have to ship.
+
+
+## The Current State
+
+Right now, the portfolio has:
+- ✅ Blog with MDX posts
+- ✅ Dark mode
+- ✅ Command palette
+- ✅ Table of contents
+- ✅ Responsive design
+- ✅ SEO optimization
+
+And it's fast. Really fast. Lighthouse scores in the high 90s, and pages load in under a second.
+
+## What's Next?
+
+I'm not done. Here's what I'm thinking about:
+
+- **Search**—Full-text search across all content
+- **Tags & Filtering**—Better content discovery
+- **Analytics**—Understanding what people actually read
+- **Comments**—Maybe? Still deciding if that's necessary
+
+But honestly? The best part is that I can add these features whenever I want. Because I built it, I understand it, and I can extend it.
+
+## Advice for Other Designers Learning to Code
+
+1. **Start with a real project** — Tutorials are great, but building something you'll actually use teaches you more.
+2. **Embrace TypeScript** — The learning curve is worth it. Types document your code and catch bugs.
+3. **Use good defaults** — Next.js, Tailwind, shadcn/ui—these tools exist for a reason. Don't reinvent the wheel.
+4. **Ship early, iterate often** — Your first version won't be perfect. That's okay. Ship it, get feedback, improve.
+5. **Read the docs** — Seriously. The Next.js docs are excellent. MDX docs are helpful. Don't just copy-paste Stack Overflow answers—understand why things work.
+
+## The Real Win
+
+Building this portfolio taught me more than any tutorial. I understand how React works. I can read TypeScript. I can debug build errors.
+
+Most importantly, I can now have better conversations with engineers because I've been in their shoes.
+
+And honestly? That's worth more than a perfect portfolio template.
+
+---
+
+**Want to see the code?** Everything is [on GitHub](https://github.com/sbriibrhm/portfolio). Pull requests welcome, questions encouraged.
+
+*Built with Next.js 16, React 19, TypeScript, MDX, Tailwind CSS, and way too much coffee.*
