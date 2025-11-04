@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CommandPalette, CommandPaletteProvider } from "@/components/command-palette";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Sabri Ibrahim — Product & UX Designer, AI Trainer",
@@ -39,6 +40,7 @@ export default function RootLayout({
             <CommandPalette />
           </CommandPaletteProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
